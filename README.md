@@ -2,7 +2,7 @@
 Gather disk information from OCP4 nodes for OCS 4 local storage setup 
 
 
-- the yamls creates 
+- the yaml creates 
    - a namespace called `ocs-disk-gatherer`
    - a service account called `ocs-disk-gatherer-sa`
    - a scc called `ocs-disk-gatherer-sa` to be attached to the service account
@@ -35,4 +35,4 @@ sdc : 1.2T : /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_96fd0e15-bb5f-4bc7-b
 ~~~
  
 - in addition there is a version available based on alpine which can be used without the need for a pull secret but is pulled from docker.io: `ocs-disk-gatherer-alpine.yaml`
-
+  - so you can run: `oc create -f https://raw.githubusercontent.com/dmoessne/ocs-disk-gather/master/ocs-disk-gatherer-alpine.yaml`
