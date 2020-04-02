@@ -86,7 +86,7 @@ spec:
           while true;
           echo "# NODE:${MY_NODE_NAME}";
           do
-          for disk in $(ls -la /dev/disk/by-id/* |egrep -v 'DVD|dm|ceph|luks|part|lvm'|awk -F '/' '{print $NF}'); do
+          for disk in $(ls -la /dev/disk/by-id/* |egrep -v 'DVD|dm|ceph|luks|part|lvm'|awk -F '/' '{print $NF}'|sort|uniq); do
            echo -n "$disk : " ;
            echo -n "$(lsblk|grep "$disk " |awk '{print $4}') : " ;
            echo -n $(ls -la /dev/disk/by-id/*|grep "$disk")|awk '{print $9}';
