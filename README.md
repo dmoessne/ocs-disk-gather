@@ -40,4 +40,4 @@ There might be times when pull with secret and or tag is not possible and hence 
   - this registry will eventually go away, so everyone is encouraged to use the term based registry and secrets
   - using sha is discouraged as well as one needs to manually keep up with current images, i.e. check if a newer version is available to avoild potential security issues
 
-  - oc create -f `` should work then 
+  - `oc create -f https://raw.githubusercontent.com/dmoessne/ocs-disk-gather/master/ocs-disk-gatherer-sha-no-secret.yaml` should work then 
