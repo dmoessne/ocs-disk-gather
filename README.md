@@ -36,3 +36,8 @@ sdc : 1.2T : /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_96fd0e15-bb5f-4bc7-b
  
  - so run `wget https://raw.githubusercontent.com/dmoessne/ocs-disk-gather/master/ocs-disk-gatherer.yaml` modify the secret with your token and the run `oc create -f ocs-disk-gatherer.yaml`
  
+There might be times when pull with secret and or tag is not possible and hence the following is provided for concenience, but mind:
+  - this registry will eventually go away, so everyone is encouraged to use the term based registry and secrets
+  - using sha is discouraged as well as one needs to manually keep up with current images, i.e. check if a newer version is available to avoild potential security issues
+
+  - oc create -f `` should work then 
