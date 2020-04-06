@@ -33,14 +33,13 @@ spec:
         - |
           #!/bin/bash
           while true;
-          echo "# NODE:${MY_NODE_NAME}";
+          echo "          # NODE:${MY_NODE_NAME}";
           do
           for disk in $(readlink -f $(ls -1 /dev/disk/by-id/* | egrep -v 'DVD|dm|ceph|luks|part|lvm') | sort|uniq); do
             DISKNAME=$(basename $disk)  
-            echo -n "$DISKNAME : " ;
-            echo -n "$(lsblk --output NAME,SIZE --nodeps|grep "$DISKNAME" |awk '{print $NF}') : " ;
-            echo -n $(ls -l /dev/disk/by-id/*|grep "$DISKNAME")|awk '{print $9}';
-            echo;
+            echo -n "          # $DISKNAME : " ;
+            echo "$(lsblk --output NAME,SIZE --nodeps|grep "$DISKNAME" |awk '{print $NF}')" ;
+            echo "        - $(ls -l /dev/disk/by-id/*|grep "$DISKNAME" | tail -n1 | awk '{print $9}')";
           done;
           sleep '600';
           done;
