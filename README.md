@@ -5,8 +5,8 @@ Gather disk information from OCP4 nodes for OCS 4 local storage setup
   1. `ocs-disk-gatherer.yaml`
       Everyting is created in default namespace which needs no scc as default project does not apply those yet (this might change in future) and pulls the image from legacy and deprecated registry.access.redhat.com and hence requires no pull secret. This might change in future as well 
   2. `ocs-disk-gatherer-sha-no-secret.yaml`
-      same as 1. but uses sha instead of tag (no tag implies latest) which might be needed in some circomstances
-  3. `ocs-disk-gatherer.yaml` 
+      same as 1. but uses sha instead of tag (no tag implies latest) which might be needed in some circomstances, but might soon be outdated, so mind security issues
+  3. `ocs-disk-gatherer-own-project.yaml` 
       This yaml creates 
       - a namespace called `ocs-disk-gatherer`
       - a service account called `ocs-disk-gatherer-sa`
@@ -81,9 +81,10 @@ ocs-disk-gatherer-nwhhn   1/1     Running   0          42s   10.128.4.21   clust
 ~~~
 
 * run one of the following to get the version of your choics:
-  - `wget 
-  - `wget
-  - `wget 
+  - `wget https://raw.githubusercontent.com/dmoessne/ocs-disk-gather/master/ocs-disk-gatherer.yaml`
+  - `wget https://raw.githubusercontent.com/dmoessne/ocs-disk-gather/master/ocs-disk-gatherer-sha-no-secret.yaml`
+  - `wget https://raw.githubusercontent.com/dmoessne/ocs-disk-gather/master/ocs-disk-gatherer-own-project.yaml`
+
   In case you've chosen the last one, don't forget to to modify the yaml and put your secret in :
 ~~~
 # vim ocs-disk-gatherer-own-project.yaml
@@ -100,6 +101,7 @@ type: kubernetes.io/dockerconfigjson
 ---
 ...
 ~~~
-  then run  `oc create -f < file >`
+  then run  `oc create -f < your donloaded file >`
  
- 
+- You can leave the pods running and in case you add new disks the logs will be refreshed after about 10 minutes, however, it is not recommended at least for the versions running in default namespace.
+  ds can be removed with `oc delete -f < your donloaded file >`
