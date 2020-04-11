@@ -18,7 +18,7 @@ Gather disk information from OCP4 nodes for OCS 4 local storage setup
 - all of the three choices from above create a daemon set called `ocs-disk-gatherer` that automatically deploys on every node labeld with `cluster.ocs.openshift.io/openshift-storage:""`
   The ds will start a loop refreshing all 10 minutes the disks it found, output to look like this:
 
-* check deployment is running 
+* check daemonset is running 
 ~~~
 # oc get ds -o wide
 NAME                DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                                 AGE   CONTAINERS   IMAGES                                SELECTOR
@@ -52,7 +52,8 @@ ocs-disk-gatherer-nwhhn   1/1     Running   0          42s   10.128.4.21   clust
 
 * check logs on all pods running at once
 ~~~
-# oc logs -l name=ocs-disk-gatherer --tail=-1 --since=10m (or # oc logs -l name=ocs-disk-gatherer --tail=-1 --since=10m -n ocs-disk-gatherer)
+# oc logs -l name=ocs-disk-gatherer --tail=-1 --since=10m 
+(or # oc logs -l name=ocs-disk-gatherer --tail=-1 --since=10m -n ocs-disk-gatherer)
           # NODE:cluster-jfb49-workerocs-0-lnq2p
           # sda : 120G
         - /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_143fdada-9a4e-47de-9
@@ -104,4 +105,5 @@ type: kubernetes.io/dockerconfigjson
   then run  `oc create -f < your donloaded file >`
  
 - You can leave the pods running and in case you add new disks the logs will be refreshed after about 10 minutes, however, it is not recommended at least for the versions running in default namespace.
-  ds can be removed with `oc delete -f < your donloaded file >`
+
+- ds can be removed with `oc delete -f < your donloaded file >`
