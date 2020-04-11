@@ -33,8 +33,9 @@ spec:
             DISKNAME=$(basename $disk)  
             echo -n "          # $DISKNAME : " ;
             echo "$(lsblk --output NAME,SIZE --nodeps|grep "$DISKNAME" |awk '{print $NF}')" ;
-            echo "        - $(ls -l /dev/disk/by-id/*|grep "$DISKNAME" | tail -n1 | awk '{print $9}')";
+            echo "        - $(ls -l /dev/disk/by-id/*|grep "$DISKNAME" | head -n1 | awk '{print $9}')";
           done;
+          echo " -------------------------------------------"
           sleep '600';
           done;
         volumeMounts:
@@ -50,5 +51,3 @@ spec:
       - name: dev-disk
         hostPath:
           path: /dev/disk
-      imagePullSecrets:
-      - name: ubi-pull-secret

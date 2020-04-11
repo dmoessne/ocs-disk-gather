@@ -1,9 +1,66 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ocs-disk-gatherer
+spec: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ocs-disk-gatherer-sa
+  namespace: ocs-disk-gatherer
+---
+allowHostDirVolumePlugin: true
+allowHostIPC: true
+allowHostNetwork: true
+allowHostPID: true
+allowHostPorts: true
+allowPrivilegeEscalation: true
+allowPrivilegedContainer: true
+allowedCapabilities: null
+apiVersion: security.openshift.io/v1
+defaultAddCapabilities: []
+fsGroup:
+  type: MustRunAs
+groups: []
+kind: SecurityContextConstraints
+metadata:
+  generation: 1
+  name: ocs-disk-gatherer-scc
+priority: null
+readOnlyRootFilesystem: false
+requiredDropCapabilities: []
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: MustRunAs
+supplementalGroups:
+  type: RunAsAny
+users:
+- system:serviceaccount:ocs-disk-gatherer:ocs-disk-gatherer-sa
+volumes:
+- configMap
+- downwardAPI
+- emptyDir
+- hostPath
+- persistentVolumeClaim
+- projected
+- secret
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ubi-pull-secret
+  namespace: ocs-disk-gatherer
+data:
+  .dockerconfigjson: <redacted, fetch from https://access.redhat.com/terms-based-registry/ >
+type: kubernetes.io/dockerconfigjson
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: ocs-disk-gatherer
-  namespace: default
+  namespace: ocs-disk-gatherer
   labels:
     k8s-app: ocs-disk-gatherer
 spec:
@@ -19,7 +76,7 @@ spec:
         cluster.ocs.openshift.io/openshift-storage: ''
       containers:
       - name: collector
-        image: registry.access.redhat.com/ubi8/ubi@sha256:d9ffa81feedcea07cd842d7d3737e73808cb6d0dc57caed0bfd5569cbba3cd8f
+        image: registry.redhat.io/ubi8/ubi
         imagePullPolicy: IfNotPresent
         command: 
         - /bin/sh
@@ -46,8 +103,12 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
+      serviceAccount: ocs-disk-gatherer-sa
+      serviceAccountName: ocs-disk-gatherer-sa
       securityContext: {}
       volumes:
       - name: dev-disk
         hostPath:
           path: /dev/disk
+      imagePullSecrets:
+      - name: ubi-pull-secret
