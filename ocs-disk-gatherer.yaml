@@ -1,66 +1,9 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ocs-disk-gatherer
-spec: {}
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: ocs-disk-gatherer-sa
-  namespace: ocs-disk-gatherer
----
-allowHostDirVolumePlugin: true
-allowHostIPC: true
-allowHostNetwork: true
-allowHostPID: true
-allowHostPorts: true
-allowPrivilegeEscalation: true
-allowPrivilegedContainer: true
-allowedCapabilities: null
-apiVersion: security.openshift.io/v1
-defaultAddCapabilities: []
-fsGroup:
-  type: MustRunAs
-groups: []
-kind: SecurityContextConstraints
-metadata:
-  generation: 1
-  name: ocs-disk-gatherer-scc
-priority: null
-readOnlyRootFilesystem: false
-requiredDropCapabilities: []
-runAsUser:
-  type: RunAsAny
-seLinuxContext:
-  type: MustRunAs
-supplementalGroups:
-  type: RunAsAny
-users:
-- system:serviceaccount:ocs-disk-gatherer:ocs-disk-gatherer-sa
-volumes:
-- configMap
-- downwardAPI
-- emptyDir
-- hostPath
-- persistentVolumeClaim
-- projected
-- secret
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: ubi-pull-secret
-  namespace: ocs-disk-gatherer
-data:
-  .dockerconfigjson: <redacted, fetch from https://access.redhat.com/terms-based-registry/ >
-type: kubernetes.io/dockerconfigjson
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: ocs-disk-gatherer
-  namespace: ocs-disk-gatherer
+  namespace: default
   labels:
     k8s-app: ocs-disk-gatherer
 spec:
@@ -76,7 +19,7 @@ spec:
         cluster.ocs.openshift.io/openshift-storage: ''
       containers:
       - name: collector
-        image: registry.redhat.io/ubi8/ubi
+        image: registry.access.redhat.com/ubi8/ubi
         imagePullPolicy: IfNotPresent
         command: 
         - /bin/sh
@@ -84,13 +27,13 @@ spec:
         - |
           #!/bin/bash
           while true;
-          echo "# NODE:${MY_NODE_NAME}";
+          echo "          # NODE:${MY_NODE_NAME}";
           do
-          for disk in $(ls -la /dev/disk/by-id/* |egrep -v 'DVD|dm|ceph|luks|part|lvm'|awk -F '/' '{print $NF}'|sort|uniq); do
-           echo -n "$disk : " ;
-           echo -n "$(lsblk|grep "$disk " |awk '{print $4}') : " ;
-           echo -n $(ls -la /dev/disk/by-id/*|grep "$disk")|awk '{print $9}';
-           echo;
+          for disk in $(readlink -f $(ls -1 /dev/disk/by-id/* | egrep -v 'DVD|dm|ceph|luks|part|lvm') | sort|uniq); do
+            DISKNAME=$(basename $disk)  
+            echo -n "          # $DISKNAME : " ;
+            echo "$(lsblk --output NAME,SIZE --nodeps|grep "$DISKNAME" |awk '{print $NF}')" ;
+            echo "        - $(ls -l /dev/disk/by-id/*|grep "$DISKNAME" | tail -n1 | awk '{print $9}')";
           done;
           sleep '600';
           done;
@@ -102,8 +45,6 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-      serviceAccount: ocs-disk-gatherer-sa
-      serviceAccountName: ocs-disk-gatherer-sa
       securityContext: {}
       volumes:
       - name: dev-disk
