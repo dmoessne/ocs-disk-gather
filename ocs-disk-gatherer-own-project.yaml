@@ -53,7 +53,7 @@ metadata:
   name: ubi-pull-secret
   namespace: ocs-disk-gatherer
 data:
-  .dockerconfigjson: ''
+  .dockerconfigjson: '<redacted, fetch from https://access.redhat.com/terms-based-registry/ >'
 type: kubernetes.io/dockerconfigjson
 ---
 apiVersion: apps/v1
