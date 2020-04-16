@@ -17,6 +17,10 @@ spec:
     spec:
       nodeSelector:
         cluster.ocs.openshift.io/openshift-storage: ''
+      tolerations:
+      - key: "node.ocs.openshift.io/storage"
+        operator: Equal
+        value: "true"
       containers:
       - name: collector
         image: registry.access.redhat.com/ubi8/ubi

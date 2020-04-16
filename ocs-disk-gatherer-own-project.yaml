@@ -53,7 +53,7 @@ metadata:
   name: ubi-pull-secret
   namespace: ocs-disk-gatherer
 data:
-  .dockerconfigjson: <redacted, fetch from https://access.redhat.com/terms-based-registry/ >
+  .dockerconfigjson: ''
 type: kubernetes.io/dockerconfigjson
 ---
 apiVersion: apps/v1
@@ -74,6 +74,11 @@ spec:
     spec:
       nodeSelector:
         cluster.ocs.openshift.io/openshift-storage: ''
+      tolerations:
+      - key: "node.ocs.openshift.io/storage"
+        operator: Equal
+        value: "true"
+
       containers:
       - name: collector
         image: registry.redhat.io/ubi8/ubi
