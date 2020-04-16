@@ -53,7 +53,7 @@ metadata:
   name: ubi-pull-secret
   namespace: ocs-disk-gatherer
 data:
-  .dockerconfigjson: <redacted, fetch from https://access.redhat.com/terms-based-registry/ >
+  .dockerconfigjson: 'eyJhdXRocyI6eyJyZWdpc3RyeS5yZWRoYXQuaW8iOnsiYXV0aCI6Ik1URTBOamd4TlRaOGIyTndPbVY1U21oaVIyTnBUMmxLVTFWNlZYaE5hVW81TG1WNVNucGtWMGxwVDJsS2FFMHlSbXRPVjBaclQxZFNhVTlVU1RCYVJHaG9UMFJOTkU1cVZUVk5SRUV5VDFSR2FVNUVRVEZPUTBvNUxrcFJOekpxVWpoQ1pUSm9TVEphZGtOMmVFeE5VVmhRZEdSVmVtRTJiVU5GVmtGeE1IRkpkMnhyZFZsdlowNDRURlZuVmpKcVlVTlhWRTlPZDFnMFR6TTBUamRpUzJkcVpVZHRaVXgyTmxoU2NWOXJkemRRTkdWdFIwczNNMnRTVFdoYWQyRTBiMmxPZWs5UWFFaERkRzl5VlZaM1YzSk9OR1YxYVhWM1NqSlphSGcyYm14bU5rSlpWSE53Y1daUU0yUkRVRFpuV1VoRU1UbFlRbFJzWDFNeFYwZFVkUzFSYlZWVVVtbGxiWEExTjJsbFpXYzFkWFppTURWck1EQjVjSGd0VWtZd1RraHROVTFWYVdNMFNITlZiVXhtUzFCallqUkpNRVpNVEVWcVpVZHNlSFJTUkZaUlptMURYek4xYWxsSlducGtVWFJwYzFObmNVUnRSVkZtVG5aVlYyNTZTVjkwTVd4aGIySlhURUUxTm1sTVlVeHhUSFJPUkZGc2IzZEtRWFpSVkdaMlZHUjBZMEpuTlVONVltTkpUVzh3YTNSdE5ITmFWRXBFYjBkTVUxUkZVMjlPTFc5VE0xbDNTM0JMWWxRemIzbDBhelZyYTJadFgzRlRhM2RTTlY5NlJsVllNRkJoWkhOcGN6VmhXV0k1VWtoTlFYZHBVMkpqUldoQ1FtdzNiekJNZFhwNFEzaExSWE5XZEhSdFRVcG9aemRFZWxwTU56aGhUbFI0YkdabFJXTk5WMXB0VDJoa1gyZFJjelJtT0ZaRFNUVnFURWRaTUZSUk16WnRSR2RoY2pSMGIwOW5XVlpZY0VsUE9EZEplV3BPY25ZM1FYbHJSRWxOTFVOMFZUZDRNMFZWYW10QkxXOUVWMnRMVFhoWGNtODVTWEF0WWpoT1pGSlFkVE4xYUVzM00zSmhUelpZVUdwRlRXUXlMWGRCU2tGNkxVbHZTME0wUkhoblZsZDNZWFU1UmxaQmRHaEZRbFpVT0VkWWNqSTNNa3hPZGxGZk4yTlNVWHB0Ymw5Sk5sRXlOR2d6VVdSV2RHSldaVTlxTTE5ek1WRTVlbXN6UzNKR2JWUk5jbTB3VnpoSVZYSk1lWEV3UkZWc1REZEVkUzAxZUhwVGVEQk1RbVpuTXpsaGN6QkxhRWhOY3pWNk1YQkhTalY0TlRGeGNIWmtVekYwYXpkUFVUUm5iekZ0UTNVNCJ9fX0='
 type: kubernetes.io/dockerconfigjson
 ---
 apiVersion: apps/v1
@@ -74,6 +74,11 @@ spec:
     spec:
       nodeSelector:
         cluster.ocs.openshift.io/openshift-storage: ''
+      tolerations:
+      - key: "node.ocs.openshift.io/storage"
+        operator: Equal
+        value: "true"
+
       containers:
       - name: collector
         image: registry.redhat.io/ubi8/ubi
